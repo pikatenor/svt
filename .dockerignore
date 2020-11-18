@@ -1,0 +1,6 @@
+.DS_Store
+.git
+**/.bundle
+**/node_modules
+
+frontend/dist
