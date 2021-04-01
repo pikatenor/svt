@@ -10,7 +10,11 @@ COPY frontend/ ./
 RUN npm run build
 
 
-FROM ruby:alpine
+FROM ruby:slim
+RUN apt-get update && apt-get install -y\
+  ca-certificates \
+  build-essential \
+  dumb-init
 RUN gem install bundler
 
 RUN mkdir /app
@@ -19,9 +23,10 @@ WORKDIR /app
 COPY Gemfile Gemfile.lock ./
 RUN bundle install
 
-COPY --from=frontend-builder /frontend ./frontend
+COPY --from=frontend-builder /frontend/dist ./frontend/dist
 COPY . .
 
 ENV RACK_ENV=production
 ENV PORT=9292
-ENTRYPOINT bundle exec rackup -p $PORT
+ENTRYPOINT ["dumb-init", "--"]
+CMD bundle exec rackup -p $PORT
