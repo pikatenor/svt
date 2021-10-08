@@ -1,0 +1,18 @@
+kind: pipeline
+name: default
+
+steps:
+- name: build-docker
+  image: plugins/docker
+  settings:
+    registry: registry.p1kachu.net:5000
+    username: pikatenor
+    password:
+      from_secret: registry-pass
+    repo: registry.p1kachu.net:5000/svt
+    cache_from: registry.p1kachu.net:5000/svt:latest
+    auto_tag: true
+- name: deploy
+  image: pikatenor/ship
+  settings:
+    name: svt
